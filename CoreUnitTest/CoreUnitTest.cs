@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using NUnit.Framework;
 
 namespace CoreUnitTest
@@ -18,10 +19,27 @@ namespace CoreUnitTest
             //https://stackoverflow.com/a/58504215/13338936
             var text = "<script>alert('o hai');</script>";
 
-            var json = System.Text.Json.JsonSerializer.Serialize(new { Property = text });
+            var employee = new Employee();
+            employee.FullName = text;
+            var json = JsonSerializer.Serialize(employee);
 
             Console.WriteLine(json);
-            //{"Property":"\u003Cscript\u003Ealert(\u0027o hai\u0027);\u003C/script\u003E"}
+            //{"FullName":"\u003Cscript\u003Ealert(\u0027o hai\u0027);\u003C/script\u003E"}
         }
+
+        [Test]
+        public void Test20210901_003()
+        {
+            var text = "{\"FullName\":\"\\u003Cscript\\u003Ealert(\\u0027o hai\\u0027);\\u003C/script\\u003E\"}";
+
+            var employee = JsonSerializer.Deserialize<Employee>(text);
+
+            Console.WriteLine(employee?.FullName);
+            //<script>alert('o hai');</script>
+        }
+    }
+    public class Employee
+    {
+        public string FullName { get; set; }
     }
 }
